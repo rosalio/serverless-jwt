@@ -1,0 +1,33 @@
+service: yardbadge
+
+plugins:
+  - serverless-offline
+
+provider:
+  name: aws
+  runtime: nodejs6.10
+  stage: dev
+  region: us-west-1
+
+functions:
+  encryptBadge:
+    handler: src/encryptBadge.handler
+    timeout: 30
+    events:
+      - http: OPTIONS /encryptBadge
+      - http:
+          method: POST
+          path: /encryptBadge
+    environment:
+      BADGE_ID_SECRET_KEY: ${ssm:badgeIdSecretKey}
+
+  decryptBadge:
+    handler: src/decryptBadge.handler
+    timeout: 30
+    events:
+      - http: OPTIONS /decryptBadge
+      - http:
+          method: POST
+          path: /decryptBadge
+    environment:
+      BADGE_ID_SECRET_KEY: ${ssm:badgeIdSecretKey}
